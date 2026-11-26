@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://sobusadriver.github.io/velyt/sitemap.xml
+Sitemap: https://sobusadriver.github.io/velyt-web/sitemap.xml

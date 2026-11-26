@@ -1,60 +1,48 @@
-# velyt landing page
+# velyt-web
 
-Marketing site + deep-link verification files for velyt.
+Marketing site for velyt. This repo is the source of truth for the web.
 
 ## Where it lives
 
 | | |
 | --- | --- |
-| Live site | https://sobusadriver.github.io/velyt/ |
-| Deploy source (public repo) | https://github.com/SobusaDriver/velyt |
-| This folder | `velyt-app/site/` (mirror of that repo) |
+| Live site | https://sobusadriver.github.io/velyt-web/ |
+| This repo | https://github.com/SobusaDriver/velyt-web |
+| App repo | https://github.com/SobusaDriver/velyt-app (private) |
 
-`velyt-app` is private and GitHub Pages cannot serve it on the free plan, so
-`SobusaDriver/velyt` is a public mirror of this folder. The live site is built
-from the root of that repo's `main` branch.
+The app repo no longer carries a `site/` copy. Edit HTML/CSS/JS here.
 
 ## How to deploy
 
-Generated assets and pages come from app code, so build them first:
+Generated assets come from app code (financing math, fair-price estimator,
+analytics, Supabase config). Rebuild them into this checkout, then commit:
 
 ```bash
-pnpm site:build   # writes site/assets/financing.js + site/assets/analytics.js
+cd ../velyt-app
+VELYT_SITE_DIR=../velyt-web pnpm site:build
+cd ../velyt-web
+git add -A && git commit -m "..." && git push origin main
 ```
 
-Then copy `site/` into the public mirror repo and push:
+The repo's `Deploy site to GitHub Pages` workflow runs on every push to `main`
+(and on manual dispatch), uploads the repo root and deploys with
+`actions/deploy-pages@v4` in about 20 seconds. Check it with:
 
-1. Make the change in `SobusaDriver/velyt`, or make it here and copy the files
-   over.
-2. Commit and push to `main`:
+```bash
+gh run list -R SobusaDriver/velyt-web --limit 1
+```
 
-   ```bash
-   git clone https://github.com/SobusaDriver/velyt.git
-   cd velyt
-   # edit index.html / assets
-   git commit -am "..." && git push origin main
-   ```
+Verify the live page:
 
-3. The repo's `Deploy site to GitHub Pages` workflow runs on every push to
-   `main` (and on manual dispatch), uploads the repo root and deploys with
-   `actions/deploy-pages@v4` in about 20 seconds. Check it with:
-
-   ```bash
-   gh run list -R SobusaDriver/velyt --limit 1
-   ```
-
-4. Verify the live page:
-
-   ```bash
-   curl -sI https://sobusadriver.github.io/velyt/
-   ```
+```bash
+curl -sI https://sobusadriver.github.io/velyt-web/
+```
 
 GitHub Pages must stay configured as **Settings → Pages → Source: GitHub
-Actions** in that repo.
+Actions** in this repo.
 
-Do not re-add a Pages workflow here: Pages is not enabled for `velyt-app`, so
-`actions/deploy-pages` fails with `Not Found`. The previous `deploy-site.yml` in
-this repo was removed for that reason.
+Do not re-add a Pages workflow to `velyt-app`: Pages is not enabled there, so
+`actions/deploy-pages` fails with `Not Found`.
 
 ## Current configuration
 
@@ -62,14 +50,14 @@ this repo was removed for that reason.
 - Google Play: **not published.** The badge is shown disabled with a
   "Próximamente" label and links nowhere. When the app ships, restore the link in
   `index.html` and the Android fallback in the deep-link script.
-- Share / deep-link base: `https://sobusadriver.github.io/velyt`, set through
+- Share / deep-link base: `https://sobusadriver.github.io/velyt-web`, set through
   `EXPO_PUBLIC_SHARE_BASE_URL` in `eas.json`
-- App Links host: `sobusadriver.github.io` with `pathPrefix: /velyt`, set in
+- App Links host: `sobusadriver.github.io` with `pathPrefix: /velyt-web`, set in
   `app.json` (`associatedDomains`, `intentFilters`)
 
 Deep-link verification files live in `.well-known/`. iOS reads the AASA from the
 host root (`https://sobusadriver.github.io/.well-known/...`), which is served by
-the separate `sobusadriver.github.io` repo, **not** by `/velyt/`. That repo needs a
+the separate `sobusadriver.github.io` repo, **not** by `/velyt-web/`. That repo needs a
 `.nojekyll` file, otherwise Pages' Jekyll build skips dot-directories and the AASA
 returns 404. Live check:
 
@@ -90,12 +78,12 @@ Team ID `UHA77MWXMX`; Android fingerprint comes from the release keystore
   location (used on device, never stored), PostHog analytics with masked replay,
   Supabase backend and Gemini for vehicle summaries. Last reviewed 2026-11-12.
 - Add the URL in App Store Connect (App Privacy) and Google Play (Store listing →
-  Privacy policy): `https://sobusadriver.github.io/velyt/privacidad.html`.
+  Privacy policy): `https://sobusadriver.github.io/velyt-web/privacidad.html`.
 
 ## Files
 
 ```
-site/
+.
 ├── index.html                   Landing page
 ├── calculadora/index.html       Simulador de cuota (runs assets/financing.js)
 ├── onboarding/index.html        Preguntas del perfil + matches del backend

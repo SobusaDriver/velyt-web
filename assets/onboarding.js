@@ -6,7 +6,7 @@
   var APP_STORE = "https://apps.apple.com/co/app/velyt/id6778179192?ct=web-onboarding"
   // The results are the app's matches tab; the store is only the fallback.
   var MATCHES = "velyt://matches"
-  var DEEP_BASE = "https://sobusadriver.github.io/velyt/search/vehicle/"
+  var DEEP_BASE = "https://sobusadriver.github.io/velyt-web/search/vehicle/"
   var cop = new Intl.NumberFormat("es-CO", {
     style: "currency",
     currency: "COP",
